@@ -1,32 +1,78 @@
 # Postgres connect module
 Connection module to Postgres database
-   
-Features: 
-- Safe reuse connection on New()
-- Automatic check and reconnect
-- Comfortable configuration
-- Stable fixed release versions
 
 ## Usage example
 
 ```golang
+package main
 
-import "github.com/vmpartner/go-pgdb/v6"
+import "github.com/moskvorechie/go-pgdb/v7"
 
-config := LoadConfig()
-pgdb.User = config.Key("user").String()
-pgdb.Pass = config.Key("pass").String()
-pgdb.Host = config.Key("host").String()
-pgdb.Port = config.Key("port").String()
-pgdb.Name = config.Key("name").String()
-pgdb.Debug, _ = config.Key("debug").Bool()
-pgdb.PingEachMinute, _ = config.Key("ping_each_minute").Int()
-pgdb.MaxIdleConns, _ = config.Key("max_idle_conns").Int()
-pgdb.MaxOpenConns, _ = config.Key("max_open_conns").Int()
-var err error
-DB, err = pgdb.New()
-if err != nil {
-    return err
+func main() {
+
+	// Open connection
+	db, err := pgdb.New(pgdb.Config{
+		Host:            "127.0.0.1",
+		Port:            30006,
+		Name:            "go-pgdb",
+		User:            "go-pgdb",
+		Pass:            "go-pgdb",
+		SslMode:         "disable",
+		TimeZone:        "Europe/Moscow",
+		MaxIdleConns:    10,
+		MaxOpenConns:    100,
+		ConnMaxLifetime: time.Hour,
+	})
+	if err != nil {
+		panic(err)
+	}
+
+	// Check query
+	err = db.Exec(`SELECT * FROM pg_database`).Error
+	if err != nil {
+		panic(err)
+	}
+
+	// Create table
+	type User struct {
+		gorm.Model
+		Name     string
+		Age      int
+		Birthday time.Time
+	}
+	user := User{Name: "test", Age: 18, Birthday: time.Now()}
+	err = db.AutoMigrate(&user)
+	if err != nil {
+		panic(err)
+	}
+
+	// Truncate
+	err = db.Exec("TRUNCATE TABLE users RESTART IDENTITY CASCADE").Error
+	if err != nil {
+		panic(err)
+	}
+
+	// Create user
+	err = db.Create(&user).Error
+	if err != nil {
+		panic(err)
+	}
+	if user.ID <= 0 {
+		panic("bad user")
+	}
+
+	// Get user
+	user = User{}
+	err = db.First(&user, "name = ? AND age = ?", "test", 18).Error
+	if err != nil {
+		panic(err)
+	}
+
+	// Drop user
+	err = db.Delete(&user).Error
+	if err != nil {
+		panic(err)
+	}
 }
 
 ```

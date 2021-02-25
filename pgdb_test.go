@@ -1,7 +1,7 @@
 package pgdb_test
 
 import (
-	"github.com/vmpartner/go-pgdb/v7"
+	"github.com/moskvorechie/go-pgdb/v7"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 	"testing"
@@ -15,6 +15,7 @@ func TestNew(t *testing.T) {
 		Name:            "go-pgdb",
 		User:            "go-pgdb",
 		Pass:            "go-pgdb",
+		Scheme:          "public",
 		SslMode:         "disable",
 		TimeZone:        "Europe/Moscow",
 		MaxIdleConns:    10,

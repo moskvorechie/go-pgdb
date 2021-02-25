@@ -13,6 +13,7 @@ type Config struct {
 	Name            string
 	User            string
 	Pass            string
+	Scheme          string
 	SslMode         string
 	TimeZone        string
 	MaxIdleConns    int
@@ -21,7 +22,7 @@ type Config struct {
 }
 
 func New(c Config) (db *gorm.DB, err error) {
-	dsn := fmt.Sprintf("user=%s password=%s dbname=%s host=%s port=%d sslmode=%s TimeZone=%s", c.User, c.Pass, c.Name, c.Host, c.Port, c.SslMode, c.TimeZone)
+	dsn := fmt.Sprintf("user=%s password=%s dbname=%s host=%s port=%d sslmode=%s search_path=%s TimeZone=%s", c.User, c.Pass, c.Name, c.Host, c.Port, c.SslMode, c.Scheme, c.TimeZone)
 	db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		return

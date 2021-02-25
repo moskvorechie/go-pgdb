@@ -17,6 +17,7 @@ func main() {
 		Name:            "go-pgdb",
 		User:            "go-pgdb",
 		Pass:            "go-pgdb",
+		Scheme:          "public",
 		SslMode:         "disable",
 		TimeZone:        "Europe/Moscow",
 		MaxIdleConns:    10,

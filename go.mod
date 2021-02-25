@@ -1,4 +1,4 @@
-module github.com/vmpartner/go-pgdb/v7
+module github.com/moskvorechie/go-pgdb/v7
 
 go 1.15
 
